@@ -1,0 +1,117 @@
+ระบบจัดการงานซ่อม (Repair Management System)
+โดยเน้นไปที่โครงสร้างทางเทคนิคที่คุณใช้ (Flask Python + MySQL)
+
+1. ข้อมูลเบื้องต้นของโครงการ
+•	ชื่อโครงการ: ระบบจัดการงานซ่อม (Repair Management System)
+•	เทคโนโลยีที่ใช้: * Backend: Python (Flask Framework)
+o	Frontend: HTML/CSS (Jinja2 Template)
+o	Database: MySQL (MariaDB)
+o	Environment: Ubuntu 22.04 LTS
+________________________________________
+2. โครงสร้างฐานข้อมูล (Database Structure)
+ตารางหลักที่ใช้คือ repair_jobs มีโครงสร้างดังนี้:
+ฟิลด์ (Field)	คำอธิบาย (Description)
+id	รหัสงานซ่อม (Primary Key, Auto Increment)
+user	ชื่อผู้แจ้งซ่อม
+department	แผนกของผู้แจ้ง
+category	หมวดหมู่ของอุปกรณ์ที่เสีย
+detail	รายละเอียดอาการเสีย
+progress_note	บันทึกความคืบหน้าจากช่าง
+status	สถานะการซ่อม (เช่น Pending, In Progress, Completed)
+created_at	วันที่และเวลาที่แจ้งซ่อม
+
+3. โครงสร้างไดเรกทอรีโครงการ (Project Structure)
+เพื่อให้เห็นภาพรวมของไฟล์ที่คุณมีในระบบ:
+Plaintext
+repair_system/
+├── app.py              # ไฟล์หลักสำหรับรัน Server และจัดการ Logic
+├── venv/               # Virtual Environment สำหรับเก็บ Library
+├── templates/          # โฟลเดอร์เก็บไฟล์ HTML (UI)
+│   ├── index.html      # หน้าแรก/หน้าแสดงรายการ
+│   ├── login.html      # หน้าเข้าสู่ระบบ
+│   ├── add_job.html    # หน้าสำหรับเพิ่มรายการแจ้งซ่อม
+│   └── dashboard.html  # หน้าสรุปผล/สถิติ
+└── static/             # เก็บไฟล์ CSS, JavaScript, รูปภาพ
+
+
+4. ขั้นตอนการติดตั้งและรันระบบ (Setup & Execution)
+ใช้สำหรับอธิบายวิธีการเปิดใช้งานบน Ubuntu:
+1.	การเปิด Virtual Environment: source ~/repair_system/venv/bin/activate
+2.	การย้ายเข้าสู่โฟลเดอร์โครงการ: cd repair_system/
+3.	การรัน Application: python app.py
+4.	ช่องทางการเข้าถึง:
+o	Local: http://127.0.0.1:5000
+o	Network IP: http://192.168.50.99:5000
+
+1. การเตรียมสภาพแวดล้อม (System Setup)
+เริ่มต้นด้วยการเตรียมเครื่องคอมพิวเตอร์ Ubuntu ให้พร้อมสำหรับการพัฒนา Web Application ด้วย Python Flask
+1.1 การติดตั้งโปรแกรมพื้นฐาน
+เปิด Terminal และรันคำสั่งเพื่อติดตั้งเครื่องมือที่จำเป็น:
+sudo apt update
+sudo apt install python3-pip python3-venv mysql-server -y
+1.2 การสร้างพื้นที่ทำงาน (Workspace)
+สร้างโฟลเดอร์หลักของโปรเจกต์และตั้งค่า Virtual Environment:
+mkdir ~/repair_system
+cd ~/repair_system
+python3 -m venv venv
+source venv/bin/activate
+1.3 การติดตั้ง Library ที่จำเป็น
+เมื่ออยู่ในสถานะ (venv) ให้ติดตั้ง Flask และตัวเชื่อมต่อฐานข้อมูล:
+pip install flask flask-mysqlconnector
+________________________________________
+2. การจัดการฐานข้อมูล (Database Configuration)
+ออกแบบและสร้างตารางเก็บข้อมูลงานซ่อมใน MySQL
+2.1 โครงสร้างตาราง repair_jobs
+คำสั่ง SQL สำหรับสร้างฐานข้อมูล:
+SQL
+CREATE DATABASE repair_db;
+USE repair_db;
+
+CREATE TABLE repair_jobs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user VARCHAR(100),
+    department VARCHAR(100),
+    category VARCHAR(100),
+    detail TEXT,
+    progress_note TEXT,
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+________________________________________
+3. ขั้นตอนการสร้างไฟล์ระบบ (File Creation)
+ในส่วนนี้จะเป็นการสร้างไฟล์ที่ว่างไว้ เพื่อรอการเติม Source Code ในภายหลัง
+3.1 การสร้างไฟล์ประมวลผลหลัก (Backend)
+cd ~/repair_system
+touch app.py
+•	หน้าที่: จัดการ Routing, การดึงข้อมูลจาก Database และควบคุม Logic ทั้งหมด
+3.2 การสร้างไฟล์ส่วนแสดงผล (Frontend Templates)
+สร้างโฟลเดอร์เก็บ Template และไฟล์ HTML ทั้งหมด:
+mkdir -p ~/repair_system/templates
+cd ~/repair_system/templates
+touch login.html index.html add_job.html dashboard.html
+รายละเอียดแต่ละไฟล์ที่สร้าง:
+•	login.html: หน้าจอสำหรับพิสูจน์ตัวตนผู้ใช้งาน
+•	index.html: หน้าหลักแสดงรายการซ่อมทั้งหมด (ข้อมูลจาก repair_jobs)
+•	add_job.html: ฟอร์มสำหรับกรอกข้อมูลการแจ้งซ่อมใหม่
+•	dashboard.html: หน้าสรุปผลสถิติและสถานะงานซ่อม
+________________________________________
+4. โครงสร้างโปรเจกต์ที่สมบูรณ์ (Project Architecture)
+เมื่อสร้างไฟล์ครบแล้ว โครงสร้างโฟลเดอร์ของคุณจะเป็นดังนี้:
+•	repair_system/ (Root)
+o	app.py (ไฟล์ควบคุมหลัก)
+o	venv/ (สภาพแวดล้อมจำลอง)
+o	static/ (สำหรับเก็บไฟล์ CSS/Images)
+o	templates/ (สำหรับเก็บไฟล์ HTML ทั้งหมด)
+________________________________________
+5. การทดสอบและรันระบบ (Deployment)
+เมื่อเติมโค้ดลงในไฟล์ทุกตัวเรียบร้อยแล้ว ให้ทำการรันระบบเพื่อตรวจสอบการทำงาน
+5.1 คำสั่งการรันระบบ
+source ~/repair_system/venv/bin/activate
+cd ~/repair_system/
+python app.py
+5.2 การเข้าใช้งานผ่าน Browser
+สามารถเข้าใช้งานได้ผ่าน URL ที่ระบบแจ้งใน Terminal:
+•	ในเครื่อง (Local): http://127.0.0.1:5000
+•	ผ่านเครือข่าย (Network): http://192.168.50.99:5000 (ตัวอย่าง IP ของคุณ)
+
+
